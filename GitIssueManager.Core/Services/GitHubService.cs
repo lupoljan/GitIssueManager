@@ -64,7 +64,12 @@ namespace GitIssueManager.Core.Services
                 "application/json"
             );
 
-            await SendGitHubIssueRequest(request);
+            using var response = await _httpClient.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                throw new GitServiceException(content, (int)response.StatusCode);
+            }
         }
 
         private void AddGitHubHeaders(HttpRequestMessage request, string token)

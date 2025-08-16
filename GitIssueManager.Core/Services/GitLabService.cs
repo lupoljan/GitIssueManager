@@ -56,7 +56,7 @@ namespace GitIssueManager.Core.Services
         {
             var projectId = HttpUtility.UrlEncode($"{owner}/{repo}");
             var url = $"{BaseUrl}/projects/{projectId}/issues/{issueId}";
-            using var request = new HttpRequestMessage(HttpMethod.Patch, url);
+            using var request = new HttpRequestMessage(HttpMethod.Put, url);
 
             AddGitLabHeaders(request, token);
 
@@ -67,7 +67,12 @@ namespace GitIssueManager.Core.Services
                 "application/json"
             );
 
-            await SendGitLabIssueRequest(request);
+            using var response = await _httpClient.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                throw new GitServiceException(content, (int)response.StatusCode);
+            }
         }
 
         private void AddGitLabHeaders(HttpRequestMessage request, string token)

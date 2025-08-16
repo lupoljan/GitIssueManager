@@ -2,6 +2,7 @@
 using Moq;
 using Moq.Protected;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Web;
 
@@ -117,7 +118,10 @@ namespace GitIssueManager.Tests.Services
             var issueId = "789";
             var projectId = HttpUtility.UrlEncode($"{owner}/{repo}");
 
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            };
 
             _mockHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -131,8 +135,6 @@ namespace GitIssueManager.Tests.Services
 
             // Act
             await _gitLabService.CloseIssueAsync(token, owner, repo, issueId);
-
-            // Assert (no exception means success)
         }
 
         [Fact]

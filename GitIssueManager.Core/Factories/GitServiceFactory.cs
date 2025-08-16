@@ -16,6 +16,12 @@ namespace GitIssueManager.Core.Factories
             if (string.IsNullOrWhiteSpace(serviceName))
                 throw new ArgumentNullException(nameof(serviceName));
 
+            var normalizedService = serviceName.ToLower();
+            if (normalizedService != "github" && normalizedService != "gitlab")
+            {
+                throw new ArgumentException($"Unsupported service: {serviceName}");
+            }
+
             var httpClient = _httpClientFactory.CreateClient(serviceName);
 
             return serviceName.ToLower() switch

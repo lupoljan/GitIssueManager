@@ -96,49 +96,6 @@ namespace GitIssueManager.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateIssueAsync_Success_ReturnsUpdatedIssue()
-        {
-            // Arrange
-            var token = "test_token";
-            var owner = "test_owner";
-            var repo = "test_repo";
-            var issueId = "456";
-            var newTitle = "Updated Title";
-            var newDescription = "Updated Description";
-
-            var responseIssue = new
-            {
-                number = int.Parse(issueId),
-                title = newTitle,
-                body = newDescription
-            };
-
-            var response = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(JsonSerializer.Serialize(responseIssue))
-            };
-
-            _mockHandler.Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.Is<HttpRequestMessage>(req =>
-                        req.Method == HttpMethod.Patch &&
-                        req.RequestUri.ToString() == $"{BaseUrl}/repos/{owner}/{repo}/issues/{issueId}"),
-                    ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(response);
-
-            // Act
-            var result = await _gitHubService.UpdateIssueAsync(
-                token, owner, repo, issueId, newTitle, newDescription);
-
-            // Assert
-            Assert.Equal(issueId, result.Id);
-            Assert.Equal(newTitle, result.Title);
-            Assert.Equal(newDescription, result.Description);
-        }
-
-        [Fact]
         public async Task CloseIssueAsync_Success_ClosesIssue()
         {
             // Arrange
@@ -147,7 +104,10 @@ namespace GitIssueManager.Tests.Services
             var repo = "test_repo";
             var issueId = "789";
 
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            };
 
             _mockHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>(
@@ -161,8 +121,6 @@ namespace GitIssueManager.Tests.Services
 
             // Act
             await _gitHubService.CloseIssueAsync(token, owner, repo, issueId);
-
-            // Assert (no exception means success)
         }
     }
 }

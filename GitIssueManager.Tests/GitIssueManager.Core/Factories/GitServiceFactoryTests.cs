@@ -44,9 +44,15 @@ namespace GitIssueManager.Tests.Factories
             var invalidService = "unknownservice";
 
             // Act & Assert
-            var exception = Assert.Throws<ArgumentException>(() => _factory.CreateGitService(invalidService));
+            var exception = Assert.Throws<ArgumentException>(
+                () => _factory.CreateGitService(invalidService)
+            );
+
             Assert.Contains("Unsupported service", exception.Message);
-            _mockHttpClientFactory.Verify(f => f.CreateClient(It.IsAny<string>()), Times.Never);
+            _mockHttpClientFactory.Verify(
+                f => f.CreateClient(It.IsAny<string>()),
+                Times.Never 
+            );
         }
 
         [Fact]
