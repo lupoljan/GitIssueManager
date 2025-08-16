@@ -16,7 +16,7 @@ builder.Services.AddHttpClient("gitlab", client =>
 });
 
 
-builder.Services.AddSingleton<GitServiceFactory>();
+builder.Services.AddSingleton<IGitServiceFactory, GitServiceFactory>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -5,15 +5,17 @@ using GitIssueManager.Core.Exceptions;
 using GitIssueManager.Core.Factories;
 using GitIssueManager.Core.Models;
 using GitIssueManager.Core.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Xunit.Sdk;
 
 namespace GitIssueManager.Api.Tests.Controllers
 {
     public class IssuesControllerTests
     {
         private readonly Mock<IGitService> _mockGitService = new();
-        private readonly Mock<GitServiceFactory> _mockFactory = new(Mock.Of<IHttpClientFactory>());
+        private readonly Mock<IGitServiceFactory> _mockFactory = new();
         private readonly IssuesController _controller;
 
         public IssuesControllerTests()
@@ -80,7 +82,7 @@ namespace GitIssueManager.Api.Tests.Controllers
             result.Should().BeOfType<ObjectResult>()
                 .Which.StatusCode.Should().Be(422);
 
-            result.As<ObjectResult>().Value.Should().Be(errorMessage);
+            result.As<ObjectResult>().Value.Should().Be(($"Git service error occurred (Status: {422}): {errorMessage}"), errorMessage);
         }
 
         [Theory]
@@ -126,10 +128,11 @@ namespace GitIssueManager.Api.Tests.Controllers
             // Arrange
             var issueId = "invalid_id";
             var request = new UpdateIssueRequest();
+            var errorMessage = "Issue not found";
 
             _mockGitService.Setup(s => s.UpdateIssueAsync(It.IsAny<string>(), It.IsAny<string>(),
                     It.IsAny<string>(), issueId, It.IsAny<string>(), It.IsAny<string>()))
-                .ThrowsAsync(new GitServiceException("Issue not found", 404));
+                .ThrowsAsync(new GitServiceException(errorMessage, 404));
 
             // Act
             var result = await _controller.UpdateIssue(service, issueId, request);
@@ -137,6 +140,8 @@ namespace GitIssueManager.Api.Tests.Controllers
             // Assert
             result.Should().BeOfType<ObjectResult>()
                 .Which.StatusCode.Should().Be(404);
+
+            result.As<ObjectResult>().Value.Should().Be(($"Git service error occurred (Status: {404}): {errorMessage}"), errorMessage);
         }
 
         [Theory]
@@ -227,9 +232,10 @@ namespace GitIssueManager.Api.Tests.Controllers
             var service = "invalid_service";
             var issueId = "456";
             var request = new CloseIssueRequest();
+            var expectedMessage = $"Unsupported service: {service}";
 
             _mockFactory.Setup(f => f.CreateGitService(service))
-                .Throws<ArgumentException>();
+                .Throws(new ArgumentException(expectedMessage));
 
             // Act
             var result = await _controller.CloseIssue(service, issueId, request);
@@ -237,5 +243,45 @@ namespace GitIssueManager.Api.Tests.Controllers
             // Assert
             result.Should().BeOfType<BadRequestObjectResult>();
         }
+
+        [Theory]
+        [InlineData("github")]
+        [InlineData("gitlab")]
+        public async Task UpdateIssue_ServiceException_ReturnsCorrectStatusCode(string service)
+        {
+            // Test various status codes
+            var testCases = new[]
+            {
+        (statusCode: 400, error: "Bad request"),
+        (statusCode: 401, error: "Unauthorized"),
+        (statusCode: 403, error: "Forbidden"),
+        (statusCode: 404, error: "Not found"),
+        (statusCode: 409, error: "Conflict"),
+        (statusCode: 422, error: "Validation failed")
+    };
+
+            foreach (var (statusCode, error) in testCases)
+            {
+                // Arrange
+                var issueId = "123";
+                var request = new UpdateIssueRequest();
+
+                _mockGitService.Setup(s => s.UpdateIssueAsync(It.IsAny<string>(), It.IsAny<string>(),
+                        It.IsAny<string>(), issueId, It.IsAny<string>(), It.IsAny<string>()))
+                    .ThrowsAsync(new GitServiceException(error, statusCode));
+
+                // Act
+                var result = await _controller.UpdateIssue(service, issueId, request);
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>()
+                    .Which.StatusCode.Should().Be(statusCode);
+
+                result.As<ObjectResult>().Value.Should().Be($"Git service error occurred (Status: {statusCode}): {error}",
+                     because: "{1}", 
+                     statusCode, error);
+            }
+        }
+
     }
 }

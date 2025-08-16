@@ -1,4 +1,5 @@
 ﻿using GitIssueManager.Api.Models;
+using GitIssueManager.Core.Exceptions;
 using GitIssueManager.Core.Factories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +9,21 @@ namespace GitIssueManager.Api.Controllers
     [Route("api/issues")]
     public class IssuesController : ControllerBase
     {
-        private readonly GitServiceFactory _serviceFactory;
+        private readonly IGitServiceFactory _serviceFactory;
 
-        public IssuesController(GitServiceFactory serviceFactory)
+        public IssuesController(IGitServiceFactory serviceFactory)
         {
             _serviceFactory = serviceFactory;
+        }
+
+        private IActionResult HandleException(Exception ex)
+        {
+            return ex switch
+            {
+                GitServiceException serviceEx => StatusCode(serviceEx.StatusCode, serviceEx.Message),
+                ArgumentException argEx => BadRequest(argEx.Message),
+                _ => StatusCode(500, "Internal server error")
+            };
         }
 
         [HttpPost("{service}")]
@@ -32,7 +43,7 @@ namespace GitIssueManager.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return HandleException(ex);
             }
         }
 
@@ -54,7 +65,7 @@ namespace GitIssueManager.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return HandleException(ex);
             }
         }
 
@@ -74,7 +85,7 @@ namespace GitIssueManager.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return HandleException(ex);
             }
         }
     }

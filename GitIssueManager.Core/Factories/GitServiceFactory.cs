@@ -2,7 +2,7 @@
 
 namespace GitIssueManager.Core.Factories
 {
-    public class GitServiceFactory
+    public class GitServiceFactory : IGitServiceFactory
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -11,7 +11,7 @@ namespace GitIssueManager.Core.Factories
             _httpClientFactory = httpClientFactory;
         }
 
-        public IGitService CreateGitService(string serviceName)
+        public virtual IGitService CreateGitService(string serviceName)
         {
             if (string.IsNullOrWhiteSpace(serviceName))
                 throw new ArgumentNullException(nameof(serviceName));
