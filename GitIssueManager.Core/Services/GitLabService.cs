@@ -52,7 +52,7 @@ namespace GitIssueManager.Core.Services
         {
             var projectId = HttpUtility.UrlEncode($"{owner}/{repo}");
             var url = $"{BaseUrl}/projects/{projectId}/issues/{issueId}";
-            using var request = new HttpRequestMessage(HttpMethod.Put, url);
+            using var request = new HttpRequestMessage(HttpMethod.Patch, url);
 
             AddGitLabHeaders(request, token);
 

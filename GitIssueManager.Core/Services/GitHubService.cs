@@ -31,7 +31,7 @@ namespace GitIssueManager.Core.Services
         public async Task<GitIssue> UpdateIssueAsync(string token, string owner, string repo, string issueId, string title, string description)
         {
             var url = $"{BaseUrl}/repos/{owner}/{repo}/issues/{issueId}";
-            using var request = new HttpRequestMessage(HttpMethod.Patch, url);
+            using var request = new HttpRequestMessage(HttpMethod.Put, url);
 
             AddGitHubHeaders(request, token);
 

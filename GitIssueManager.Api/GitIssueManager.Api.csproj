@@ -11,8 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
+    <ProjectReference Include="..\GitIssueManager.Core\GitIssueManager.Core.csproj" />
   </ItemGroup>
 
 </Project>
