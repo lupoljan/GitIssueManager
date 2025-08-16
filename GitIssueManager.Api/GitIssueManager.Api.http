@@ -1,6 +1,6 @@
 @GitIssueManager.Api_HostAddress = http://localhost:5133
 
-GET {{GitIssueManager.Api_HostAddress}}/weatherforecast/
+POST {{GitIssueManager.Api_HostAddress}}/issues/{service}
 Accept: application/json
 
 ###

@@ -1,22 +1,30 @@
 ﻿using GitIssueManager.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GitIssueManager.Core.Factories
 {
     public class GitServiceFactory
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public GitServiceFactory(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
         public IGitService CreateGitService(string serviceName)
         {
+            if (string.IsNullOrWhiteSpace(serviceName))
+                throw new ArgumentNullException(nameof(serviceName));
+
+            var httpClient = _httpClientFactory.CreateClient(serviceName);
+
             return serviceName.ToLower() switch
             {
-                "github" => new GitHubService(),
-                "gitlab" => new GitLabService(),
-                _ => throw new ArgumentException("Unsupported service")
+                "github" => new GitHubService(httpClient),
+                "gitlab" => new GitLabService(httpClient),
+                _ => throw new ArgumentException($"Unsupported service: {serviceName}")
             };
         }
     }
 }
+

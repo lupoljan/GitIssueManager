@@ -8,8 +8,13 @@ namespace GitIssueManager.Core.Services
 {
     public class GitHubService : IGitService
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://api.github.com";
+
+        public GitHubService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
 
         public async Task<GitIssue> CreateIssueAsync(string token, string owner, string repo, string title, string description)
         {

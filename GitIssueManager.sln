@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitIssueManager.Core", "Git
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitIssueManager.Api", "GitIssueManager.Api\GitIssueManager.Api.csproj", "{4FA42EC7-2EA3-4351-8C09-874DF8A28F55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitIssueManager.Tests", "GitIssueManager.Tests\GitIssueManager.Tests.csproj", "{A2329398-B112-4740-A644-8B8CE38846D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4FA42EC7-2EA3-4351-8C09-874DF8A28F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FA42EC7-2EA3-4351-8C09-874DF8A28F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FA42EC7-2EA3-4351-8C09-874DF8A28F55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2329398-B112-4740-A644-8B8CE38846D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2329398-B112-4740-A644-8B8CE38846D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2329398-B112-4740-A644-8B8CE38846D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2329398-B112-4740-A644-8B8CE38846D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

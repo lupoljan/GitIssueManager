@@ -1,6 +1,5 @@
 ﻿using GitIssueManager.Core.Exceptions;
 using GitIssueManager.Core.Models;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Web;
@@ -9,8 +8,13 @@ namespace GitIssueManager.Core.Services
 {
     public class GitLabService : IGitService
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://gitlab.com/api/v4";
+
+        public GitLabService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
 
         public async Task<GitIssue> CreateIssueAsync(string token, string owner, string repo, string title, string description)
         {
