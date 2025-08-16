@@ -1,9 +1,6 @@
 ﻿using GitIssueManager.Core.Factories;
 using GitIssueManager.Core.Services;
 using Moq;
-using System;
-using System.Net.Http;
-using Xunit;
 
 namespace GitIssueManager.Tests.Factories
 {

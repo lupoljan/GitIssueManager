@@ -5,10 +5,8 @@ using GitIssueManager.Core.Exceptions;
 using GitIssueManager.Core.Factories;
 using GitIssueManager.Core.Models;
 using GitIssueManager.Core.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xunit.Sdk;
 
 namespace GitIssueManager.Api.Tests.Controllers
 {

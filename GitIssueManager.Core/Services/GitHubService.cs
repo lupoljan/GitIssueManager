@@ -113,7 +113,6 @@ namespace GitIssueManager.Core.Services
 
         public override void Write(Utf8JsonWriter writer, GitIssue value, JsonSerializerOptions options)
         {
-            // Not needed for this use case
             throw new NotImplementedException();
         }
     }
